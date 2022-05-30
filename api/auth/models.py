@@ -1,6 +1,8 @@
 from hmac import compare_digest
 
 import mongoengine as me
+from flask import current_app as app
+from main import bcrypt
 
 
 class User(me.Document):
@@ -10,7 +12,11 @@ class User(me.Document):
     password = me.StringField(required=True)
 
     def check_password(self, password):
-        return compare_digest(self.password, password)
+        return bcrypt.check_password_hash(self.password, password)
+    
+    @staticmethod
+    def make_password(password):
+        return bcrypt.generate_password_hash(password, app.config.get('BCRYPT_LOG_ROUNDS')).decode("utf-8")
 
     def serialize(self):
         return {

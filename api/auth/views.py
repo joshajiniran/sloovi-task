@@ -1,11 +1,10 @@
 import hashlib
 
+from api.auth.models import User
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token
-
-from api.auth.models import User
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -17,9 +16,7 @@ def register():
     if user_exist:
         return jsonify(msg="User with email already registered", status=False), 400
 
-    new_user["password"] = hashlib.sha256(
-        new_user["password"].encode("utf-8")
-    ).hexdigest()
+    new_user["password"] = User.make_password(new_user["password"])
     new_user = User(**new_user)
     new_user.save()
     return (
@@ -33,8 +30,7 @@ def login():
     payload = request.get_json()
     user = User.objects(email=payload.get("email")).first()
     if user:
-        encrypted_pswd = hashlib.sha256(payload["password"].encode("utf-8")).hexdigest()
-        if encrypted_pswd == user.password:
+        if user.check_password(payload.get("password")):
             access_token = create_access_token(identity=user.serialize())
             return jsonify(access_token=access_token, status=True), 200
     return jsonify(msg="Username or password is incorrect", status=False), 401

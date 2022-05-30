@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_mongoengine import MongoEngine
 
@@ -6,6 +7,7 @@ from config import config
 
 jwt = JWTManager()
 db = MongoEngine()
+bcrypt = Bcrypt()
 
 
 def create_app(config_name="development"):
@@ -22,6 +24,7 @@ def create_app(config_name="development"):
 def extensions(app):
     db.init_app(app)
     jwt.init_app(app)
+    bcrypt.init_app(app)
 
 
 def routes(app):

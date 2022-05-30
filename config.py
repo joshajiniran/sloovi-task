@@ -29,6 +29,7 @@ class TestingConfig(Config):
         "db": os.getenv("MONGODB_NAME", "sloovi"),
         "host": os.getenv("MONGODB_TEST_URI"),
     }
+    BCRYPT_LOG_ROUNDS = 4
 
 
 @dataclass

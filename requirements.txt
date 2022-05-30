@@ -1,0 +1,7 @@
+Flask==2.1.2
+Flask-mongoengine==1.0.0
+Flask-JWT-Extended==4.4.0
+Flask-RESTful==0.3.9
+python-dotenv==0.20.0
+Flask-Bcrypt==1.0.1
+pytest==7.1.2

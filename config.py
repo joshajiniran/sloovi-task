@@ -16,7 +16,7 @@ class Config:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     JWT_EXPIRES_ON = datetime.timedelta(days=1)
     MONGODB_SETTINGS = {
-        "db": os.getenv("MONGODB_DB", "sloovi"),
+        "db": os.getenv("MONGODB_NAME", "sloovi"),
         "host": os.getenv("MONGODB_URI")
     }
 

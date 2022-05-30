@@ -1,12 +1,13 @@
+import os
+
 from flask import Flask
-from flask_restful import Api
-from config import config
 from flask_jwt_extended import JWTManager
 from flask_mongoengine import MongoEngine
 
+from config import config
+
 jwt = JWTManager()
 db = MongoEngine()
-api = Api()
 
 
 def create_app(config_name="development"):
@@ -23,7 +24,6 @@ def create_app(config_name="development"):
 def extensions(app):
     db.init_app(app)
     jwt.init_app(app)
-    api.init_app(app)
 
 
 def routes(app):

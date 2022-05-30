@@ -3,6 +3,7 @@ import pytest
 from main import create_app
 from mongoengine import connect
 from mongoengine.connection import _get_db
+from api.auth.models import User
 
 connect("test", alias="test")
 
@@ -27,5 +28,13 @@ def client(app):
 
 
 @pytest.fixture()
-def runner(app):
-    return app.test_cli_runner()
+def create_user():
+    user = User(
+        first_name="Dan",
+        last_name="Taylor",
+        email="dantaylor@sloovi.group",
+        password="dantay100",
+    )
+    user.make_password(user.password)
+    print(user.password)
+    user.save()

@@ -18,17 +18,24 @@ class Config:
     BCRYPT_LOG_ROUNDS = 11
     MONGODB_SETTINGS = {
         "db": os.getenv("MONGODB_NAME", "sloovi"),
-        "host": os.getenv("MONGODB_URI")
+        "host": os.getenv("MONGODB_URI"),
     }
+
 
 @dataclass
 class TestingConfig(Config):
     TESTING = True
+    MONGODB_SETTINGS = {
+        "db": os.getenv("MONGODB_NAME", "sloovi"),
+        "host": os.getenv("MONGODB_TEST_URI"),
+    }
+
 
 @dataclass
 class DevelopmentConfig(Config):
     DEBUG = True
     BCRYPT_LOG_ROUNDS = 4
+
 
 @dataclass
 class ProductionConfig(Config):

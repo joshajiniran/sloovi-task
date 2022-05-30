@@ -15,6 +15,7 @@ class Config:
     PRODUCTION = False
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     JWT_EXPIRES_ON = datetime.timedelta(days=1)
+    BCRYPT_LOG_ROUNDS = 11
     MONGODB_SETTINGS = {
         "db": os.getenv("MONGODB_NAME", "sloovi"),
         "host": os.getenv("MONGODB_URI")
@@ -27,6 +28,7 @@ class TestingConfig(Config):
 @dataclass
 class DevelopmentConfig(Config):
     DEBUG = True
+    BCRYPT_LOG_ROUNDS = 4
 
 @dataclass
 class ProductionConfig(Config):

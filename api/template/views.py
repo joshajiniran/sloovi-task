@@ -1,9 +1,10 @@
-from api.template.models import Template
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from mongoengine.errors import DoesNotExist, NotUniqueError, FieldDoesNotExist
+from mongoengine.errors import DoesNotExist, FieldDoesNotExist, NotUniqueError
+
+from api.template.models import Template
 
 template_bp = Blueprint("template", __name__)
 

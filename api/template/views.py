@@ -62,7 +62,7 @@ def update_template(id: int):
         current_user = get_jwt_identity()
         template = Template.objects.get(id=id, owner=current_user["_id"])
         template.update(**body)
-        template.save()
+        template.reload()
         return (
             jsonify(
                 data=template.serialize(),
@@ -73,6 +73,8 @@ def update_template(id: int):
         )
     except NotUniqueError:
         return jsonify(msg="Template already exist", status=False), 400
+    except DoesNotExist:
+        return jsonify(msg="Template does not exist", status=False), 404
     except FieldDoesNotExist as e:
         return jsonify(msg="Invalid payload", errors=str(e), status=False), 400
 

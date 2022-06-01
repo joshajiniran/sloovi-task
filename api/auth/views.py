@@ -1,12 +1,11 @@
 import hashlib
 
+from api.auth.models import User
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token
-from mongoengine.errors import ValidationError
-
-from api.auth.models import User
+from mongoengine.errors import FieldDoesNotExist, ValidationError
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -30,7 +29,8 @@ def register():
         )
     except ValidationError:
         return jsonify(msg="Validation error: invalid payload", status=False), 422
-
+    except FieldDoesNotExist as e:
+        return jsonify(msg=f"Invalid payload", errors=str(e), status=False), 422
 
 @auth_bp.route("/login", methods=["POST"])
 def login():

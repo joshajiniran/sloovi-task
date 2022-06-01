@@ -42,7 +42,13 @@ You can test the API locally using pytest but ensure the test db has been create
 Use the command below to test using pytest.
 
 ```
+python -m pytest or pytest
+```
 
+or
+
+```
+python -m pytest -vv or pytest -vv
 ```
 
 ## Help

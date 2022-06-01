@@ -1,8 +1,9 @@
 import pytest
-from api.auth.models import User
-from main import create_app
 from mongoengine import connect
 from mongoengine.connection import _get_db
+
+from api.auth.models import User
+from main import create_app
 
 connect("test", alias="test")
 
@@ -38,15 +39,21 @@ def create_user(client):
         },
     )
 
+
 @pytest.fixture()
 def token(create_user, client):
-    resp = client.post('/login',
-                       json={"email": "dantaylor@sloovi.group", "password": "dantay100"})
-    token = resp.json['access_token']
+    resp = client.post(
+        "/login", json={"email": "dantaylor@sloovi.group", "password": "dantay100"}
+    )
+    token = resp.json["access_token"]
     return token
+
 
 @pytest.fixture()
 def create_template(client, token):
-    resp = client.post('/template', 
-                       json={"template_name": "Test", "subject": "test subject", "body": "test_body"}, headers={'Authorization': f'Bearer {token}'})
+    resp = client.post(
+        "/template",
+        json={"template_name": "Test", "subject": "test subject", "body": "test_body"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
     return resp.json

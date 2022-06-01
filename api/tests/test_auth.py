@@ -27,18 +27,34 @@ def test_duplicate_user_registration(client, create_user):
     assert resp.json["msg"] == "User with email already registered"
 
 
+def test_register_new_user_invalid_data(client):
+    resp = client.post(
+        "/register",
+        json={
+            "first_tname": "Dan",
+            "last_name": "Someone",
+            "emal": "danincorrectpswd.com",
+            "password": "testpswd",
+        },
+    )
+    assert resp.status_code == 400
+    assert resp.json["msg"] == "Invalid payload"
+    assert "errors" in resp.json
+
+
 def test_register_new_user_wrong_payload(client):
     resp = client.post(
         "/register",
         json={
             "first_name": "Dan",
-            "last_name": "Someone",
-            "email": "danincorrectpswd.com",
+            "last_name": 12,
+            "email": "danincorrectswd.com",
             "password": "testpswd",
         },
     )
-    assert resp.status_code == 422
+    assert resp.status_code == 400
     assert resp.json["msg"] == "Validation error: invalid payload"
+    assert "errors" in resp.json
 
 
 def test_login_user_successful(client, create_user):
@@ -64,3 +80,16 @@ def test_login_user_fail(client):
     )
     assert resp.status_code == 401
     assert resp.json["msg"] == "Username or password is incorrect"
+
+
+def test_login_user_invalid_payload(client):
+    resp = client.post(
+        "/login",
+        json={
+            "ema": "miketee@sloovi.group",
+            "passw)rd": "knockout100",
+        },
+    )
+    assert resp.status_code == 400
+    assert resp.json["msg"] == "Invalid payload"
+    assert "errors" in resp.json

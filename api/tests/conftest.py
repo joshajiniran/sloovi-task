@@ -28,13 +28,13 @@ def client(app):
 
 
 @pytest.fixture()
-def create_user():
-    user = User(
-        first_name="Dan",
-        last_name="Taylor",
-        email="dantaylor@sloovi.group",
-        password="dantay100",
+def create_user(client):
+    return client.post(
+        "/register",
+        json={
+            "first_name": "Dan",
+            "last_name": "Taylor",
+            "email": "dantaylor@sloovi.group",
+            "password": "dantay100",
+        },
     )
-    user.make_password(user.password)
-    print(user.password)
-    user.save()

@@ -30,7 +30,7 @@ def register():
     except FieldDoesNotExist as e:
         return jsonify(msg=f"Invalid payload", errors=str(e), status=False), 400
     except ValidationError as e:
-        return jsonify(msg="Validation error: invalid field format", errors=str(e), status=False), 400
+        return jsonify(msg="Validation error: invalid payload", errors=str(e), status=False), 400
 
 @auth_bp.route("/login", methods=["POST"])
 def login():

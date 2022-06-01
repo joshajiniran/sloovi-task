@@ -1,10 +1,9 @@
+from api.template.models import Template
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from mongoengine.errors import DoesNotExist, NotUniqueError
-
-from api.template.models import Template
+from mongoengine.errors import DoesNotExist, NotUniqueError, FieldDoesNotExist
 
 template_bp = Blueprint("template", __name__)
 
@@ -28,6 +27,8 @@ def create_template():
         )
     except NotUniqueError as e:
         return jsonify(msg="Template already exist", status=False), 400
+    except FieldDoesNotExist as e:
+        return jsonify(msg="Invalid payload", errors=str(e), status=False), 400
 
 
 @template_bp.route("/template", methods=["GET"])
@@ -72,6 +73,8 @@ def update_template(id: int):
         )
     except NotUniqueError:
         return jsonify(msg="Template already exist", status=False), 400
+    except FieldDoesNotExist as e:
+        return jsonify(msg="Invalid payload", errors=str(e), status=False), 400
 
 
 @template_bp.route("/template/<id>", methods=["DELETE"])

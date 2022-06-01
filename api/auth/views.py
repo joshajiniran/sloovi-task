@@ -14,7 +14,7 @@ auth_bp = Blueprint("auth", __name__)
 def register():
     try:
         new_user = request.get_json()
-        user_exist = User.objects(email=new_user["email"])
+        user_exist = User.objects(email=new_user.get('email'))
         if user_exist:
             return jsonify(msg="User with email already registered", status=False), 400
 
@@ -27,20 +27,21 @@ def register():
             ),
             201,
         )
-    except ValidationError:
-        return jsonify(msg="Validation error: invalid payload", status=False), 422
     except FieldDoesNotExist as e:
-        return jsonify(msg=f"Invalid payload", errors=str(e), status=False), 422
+        return jsonify(msg=f"Invalid payload", errors=str(e), status=False), 400
+    except ValidationError as e:
+        return jsonify(msg="Validation error: invalid field format", errors=str(e), status=False), 400
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
     try:
         payload = request.get_json()
-        user = User.objects(email=payload.get("email")).first()
+        User(**payload) # perform validation on field names
+        user = User.objects(email=payload.get('email')).first()
         if user:
-            if user.check_password(payload.get("password")):
+            if user.check_password(payload.get('password')):
                 access_token = create_access_token(identity=user.serialize())
                 return jsonify(access_token=access_token, status=True), 200
         return jsonify(msg="Username or password is incorrect", status=False), 401
-    except ValidationError:
-        return jsonify(msg="Validation error: invalid payload", status=False), 422
+    except FieldDoesNotExist as e:
+        return jsonify(msg=f"Invalid payload", errors=str(e), status=False), 400

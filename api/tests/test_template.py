@@ -81,3 +81,81 @@ def test_get_single_template_invalid_id(client, token):
     )
     assert resp.status_code == 404
     assert resp.json["msg"] == "Template does not exist"
+
+
+def test_update_template(client, token, create_template):
+    temp = create_template["data"]
+    resp = client.put(
+        f"/template/{temp['_id']}",
+        json={
+            "template_name": "New Test",
+            "subject": "New test subject",
+            "body": "Changed test body",
+        },
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert resp.status_code == 200
+    assert resp.json["data"]["_id"] == temp['_id']
+    assert resp.json["data"]["template_name"] == "New Test"
+    assert resp.json["data"]["subject"] == "New test subject"
+    assert resp.json["data"]["body"] == "Changed test body"
+    
+def test_update_template_invalid_id(client, token):
+    resp = client.put(
+        "/template/62978a4d5e41441d2cdcbf38",
+        json={
+            "template_name": "New Test",
+            "subject": "New test subject",
+            "body": "Changed test body",
+        },
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert resp.status_code == 404
+    assert resp.json["msg"] == "Template does not exist"
+
+def test_update_template_invalid_authorization(client, create_template):
+    temp = create_template["data"]
+    resp = client.put(
+        f"/template/{temp['_id']}",
+        json={
+            "template_name": "New Test",
+            "subject": "New test subject",
+            "body": "Changed test body",
+        },
+        headers={"Authorization": f"Bearer {invalid_token}"},
+    )
+
+    assert resp.status_code == 401
+    assert "msg" in resp.json
+
+def test_delete_template(client, token, create_template):
+    temp = create_template["data"]
+    resp = client.delete(
+        f"/template/{temp['_id']}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert resp.status_code == 200
+    assert resp.json["msg"] == "Deleted template successfully"
+
+
+def test_delete_template_invalid_id(client, token):
+    resp = client.delete(
+        "/template/62978a4d5e41441d2cdcbf38",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert resp.status_code == 404
+    assert resp.json["msg"] == "Template does not exist"
+    
+
+def test_delete_template_invalid_authorization(client, create_template):
+    temp = create_template["data"]
+    resp = client.delete(
+        f"/template/{temp['_id']}",
+        headers={"Authorization": f"Bearer {invalid_token}"}
+    )
+    
+    assert resp.status_code == 401
+    assert "msg" in resp.json

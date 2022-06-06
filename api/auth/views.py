@@ -1,10 +1,10 @@
+from api.auth.models import User
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token
-from mongoengine.errors import FieldDoesNotExist, ValidationError
-
-from api.auth.models import User
+from mongoengine.errors import (FieldDoesNotExist, NotUniqueError,
+                                ValidationError)
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -35,6 +35,8 @@ def register():
             ),
             400,
         )
+    except NotUniqueError:
+        return jsonify(msg="User with email already registered", status=False), 400
 
 
 @auth_bp.route("/login", methods=["POST"])

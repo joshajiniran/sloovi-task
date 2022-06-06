@@ -2,7 +2,6 @@ from hmac import compare_digest
 
 import mongoengine as me
 from flask import current_app as app
-from jsonschema import ValidationError
 from main import bcrypt
 
 
@@ -11,7 +10,7 @@ class User(me.Document):
     last_name = me.StringField(max_length=50)
     email = me.EmailField(required=True, unique=True)
     password = me.StringField(required=True)
-    
+
     def clean(self):
         if self.email:
             self.email = self.email.replace("+", "")

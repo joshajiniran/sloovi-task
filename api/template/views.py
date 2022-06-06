@@ -1,10 +1,10 @@
+from api.template.models import Template
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from mongoengine.errors import DoesNotExist, FieldDoesNotExist, NotUniqueError
-
-from api.template.models import Template
+from mongoengine.errors import (DoesNotExist, FieldDoesNotExist,
+                                NotUniqueError, ValidationError)
 
 template_bp = Blueprint("template", __name__)
 
@@ -30,6 +30,8 @@ def create_template():
         return jsonify(msg="Template already exist", status=False), 400
     except FieldDoesNotExist as e:
         return jsonify(msg="Invalid payload", errors=str(e), status=False), 400
+    except ValidationError as e:
+        return jsonify(msg="Validation error", errors=str(e), status=False), 400
 
 
 @template_bp.route("/template", methods=["GET"])
@@ -37,7 +39,7 @@ def create_template():
 def get_all_templates():
     current_user = get_jwt_identity()
 
-    templates = Template.objects(owner=current_user["_id"]).all()
+    templates = Template.objects(owner=current_user["_id"], deleted=False).all()
     return (
         jsonify(results=[template.serialize() for template in templates], status=True),
         200,
@@ -50,6 +52,8 @@ def get_template(id: int):
     try:
         current_user = get_jwt_identity()
         template = Template.objects.get(id=id, owner=current_user["_id"])
+        if template.deleted:
+            return jsonify(msg="Template was already deleted", status=False), 404
         return jsonify(data=template.serialize(), status=True), 200
     except DoesNotExist:
         return jsonify(msg="Template does not exist", status=False), 404
@@ -86,7 +90,11 @@ def delete_template(id: int):
     try:
         current_user = get_jwt_identity()
         template = Template.objects.get(id=id, owner=current_user["_id"])
-        template.delete()
-        return jsonify(msg="Deleted template successfully", status=True), 200
+        if template.deleted == False:
+            template.deleted = True
+            template.save()
+            return jsonify(msg="Deleted template successfully", status=True), 200
+        
+        return jsonify(msg="Template was already deleted", status=True), 200
     except DoesNotExist:
         return jsonify(msg="Template does not exist", status=False), 404

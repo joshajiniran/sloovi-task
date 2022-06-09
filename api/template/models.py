@@ -17,4 +17,5 @@ class Template(me.Document):
             "subject": self.subject,
             "body": self.body,
             "owner": str(self.owner.pk),
+            "deleted": self.deleted,
         }

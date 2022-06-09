@@ -1,4 +1,4 @@
-invalid_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1NDA5ODQzNSwianRpIjoiNmI5OTU4N2EtOTU3Zi00M2RkLWIwNWQtODFmNmQ3ZmE2M2Q2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2Mjk3ODlmODVlNDE0NDFkMmNkY2JmMzciLCJmaXJzdF9uYW1lIjoiSm9zaCIsImxhc3RfbmFtZSI6IkFKIiwiZW1haWwiOiJqb3NoYWppbmlyYW5AZ21haWwuY29tIn0sIm5iZiI6MTY1NDA5ODQzNSwiZXhwIjoxNjU0MDk5MzM1fQ.IAO9NzNYBfR5suLd9WCoOhn_wmbEndBmSuAAmKtaWc4"
+invalid_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1NDUwMzk3NSwianRpIjoiMGE1OWEzZDUtY2U0Ny00NTM1LThiZWQtYTdhMzU5MDg1NjljIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJfaWQiOiI2Mjk3YTcxYjcxZGMxMGNlMDJiZjVmYjUiLCJmaXJzdF9uYW1lIjoiQXlvIiwibGFzdF9uYW1lIjoiT2xheWl3b2xhIiwiZW1haWwiOiJheW9vbGF5aXdvbGFAZ21haWwuY29tIn0sIm5iZiI6MTY1NDUwMzk3NSwiZXhwIjoxNjU0NTA0ODc1fQ.JxWeKXAL7zodCsXxSB0TwfjW_e2mB9Qa4nHfKF1_V2Y"
 
 
 def test_create_template(client, token):
@@ -31,7 +31,7 @@ def test_create_template_invalid_payload(client, token):
     assert "errors" in resp.json
 
 
-def test_create_template_invalid_authorization(client, token=invalid_token):
+def test_create_template_invalid_authorization(client):
     resp = client.post(
         "/template",
         json={
@@ -39,7 +39,7 @@ def test_create_template_invalid_authorization(client, token=invalid_token):
             "subject": "Evolution",
             "body": "Some template evolution here haha",
         },
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {invalid_token}"},
     )
 
     assert resp.status_code == 401

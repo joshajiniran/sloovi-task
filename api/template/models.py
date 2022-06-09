@@ -8,6 +8,7 @@ class Template(me.Document):
     subject = me.StringField(required=True)
     body = me.StringField()
     owner = me.ReferenceField(User, unique_with="template_name")
+    deleted = me.BooleanField(default=False)
 
     def serialize(self):
         return {
@@ -16,4 +17,5 @@ class Template(me.Document):
             "subject": self.subject,
             "body": self.body,
             "owner": str(self.owner.pk),
+            "deleted": self.deleted,
         }

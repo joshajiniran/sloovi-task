@@ -14,10 +14,6 @@ auth_bp = Blueprint("auth", __name__)
 def register():
     try:
         new_user = request.get_json()
-        user_exist = User.objects(email=new_user.get("email"))
-        if user_exist:
-            return jsonify(msg="User with email already registered", status=False), 400
-
         new_user["password"] = User.make_password(new_user["password"])
         new_user = User(**new_user)
         new_user.save()
